@@ -1,3 +1,4 @@
+
 from flask import Flask
 import pymysql
 import requests
@@ -26,6 +27,16 @@ def get_open_weather_map_data():
 def set_db_data():
   response = get_open_weather_map_data()
   print(response)
+  currentWeather = response['current']
+  weatherReport = currentWeather['weather'][0]
+  conn = pymysql.connect(database="WeatherDB",user="admin",password="admin",host="localhost")
+  cur = conn.cursor()
+  sql_query = "INSERT INTO currentWeatherTable (clouds, dt, feels_like, humidity, temp ) VALUES (%(clouds)s,  %(dt)s, %(feels_like)s, %(humidity)s, %(temp)s )"
+  cur.execute(sql_query, currentWeather)
+  sql_query = "INSERT INTO weatherSummaryTable (id, description, icon, main) VALUES (%(id)s, %(description)s, %(icon)s, %(main)s)"
+  cur.execute(sql_query, weatherReport)
+  
+  return currentWeather
   return response
 
 if __name__ == "__main__":
