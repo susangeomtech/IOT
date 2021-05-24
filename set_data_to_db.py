@@ -8,7 +8,7 @@ OPEN_WEATHER_MAP_API_KEY = "31ddfd85c327437703aecdba29571796"
 api_url = "http://api.openweathermap.org/data/2.5/weather?q=Bengaluru&appid=" + OPEN_WEATHER_MAP_API_KEY
 
 app = Flask(__name__)
-@app.route(/)
+@app.route("/")
 def welcome():
   return "Welcome to Amrita Intelligent Infrastructure Data Management and Control Panel App. \n Use one of the options below."
 
