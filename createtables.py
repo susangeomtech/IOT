@@ -17,9 +17,9 @@ def  hello():
 def set_db_data():
   conn = pymysql.connect(database="weatherdata",user="susan",password="hello1234",host="localhost")
   cur = conn.cursor()
-  sql_query = "CREATE TABLE currentWeatherTable(id int auto_increment primary key, clouds text, dew_point text, dt text, feels_like text, humidity text, temp text)"
+  sql_query = "CREATE TABLE currentWeatherTable(clouds int, dew_point int, dt int, feels_like text, humidity int, temp int)"
   cur.execute(sql_query)
-  sql_query = "CREATE TABLE weatherSummaryTable(id int auto_increment primary key, description text, icon text, main text)"
+  sql_query = "CREATE TABLE weatherSummaryTable(id int, description text, icon text, main text)"
   cur.execute(sql_query)
   return "Tables currentWeatherTable, weatherSummaryTable Created"
 
