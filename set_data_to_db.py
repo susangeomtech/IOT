@@ -2,7 +2,6 @@
 from flask import Flask
 import pymysql
 import requests
-import pymysql
 
 lat = '13.02'
 lon = '77.68'
@@ -31,12 +30,37 @@ def set_db_data():
   print(response)
   currentWeather = response['current']
   weatherReport = currentWeather['weather'][0]
+
+  for value in currentWeather:
+    weather_data = {
+      'clouds': currentWeather["clouds"],
+      'dew_point': currentWeather["dew_point"],
+      'dt':currentWeather["dt"],
+      'feels_like': currentWeather["feels_like"],
+      'humidity': currentWeather["humidity"],
+      'temp': currentWeather["temp"]
+      }
+
+  for value in weatherReport:
+    weather_report_data = {
+      'id': weatherReport["id"],
+      'description': weatherReport["description"],
+      'icon': weatherReport["icon"],
+      'main': weatherReport["main"]
+      }
+
+
   conn = pymysql.connect(database="weatherdata",user="susan",password="hello1234",host="localhost")
   cur = conn.cursor()
-  print(currentWeather)
-  cur.execute("INSERT INTO currentWeatherTable (clouds, dew_point, dt, feels_like, humidity, temp ) VALUES (%(clouds)s,  (%dew_point)s, %(dt)s, %(feels_like)s, %(humidity)s, %(temp)s )", currentWeather)
-  cur.execute("INSERT INTO weatherSummaryTable (id, description, icon, main) VALUES (%(id)s, %(description)s, %(icon)s, %(main)s)", weatherReport)
-  return currentWeather
+    
+  insert_weather_data = "INSERT INTO currentWeatherTable(clouds, dew_point, dt, feels_like, humidity, temp ) VALUES (%(clouds)s, %(dew_point)s, %(dt)s, %(feels_like)s, %(humidity)s, %(temp)s)"
+  cur.execute(insert_weather_data, weather_data)
+
+  insert_weather_report_data = "INSERT INTO weatherSummaryTable (id, description, icon, main) VALUES (%(id)s, %(description)s, %(icon)s, %(main)s)"
+  cur.execute(insert_weather_report_data, weather_report_data)
+  conn.commit()
+
+  return "Success"
  
 if __name__ == "__main__":
   #Application runs on port 3000
