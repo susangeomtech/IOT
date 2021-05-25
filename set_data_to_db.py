@@ -4,9 +4,11 @@ import pymysql
 import requests
 import pymysql
 
-
+lat = '13.02'
+lon = '77.68'
 OPEN_WEATHER_MAP_API_KEY = "31ddfd85c327437703aecdba29571796"
-api_url = "http://api.openweathermap.org/data/2.5/weather?q=Bengaluru&appid=" + OPEN_WEATHER_MAP_API_KEY
+#Create openweathermap url
+api_url = "https://api.openweathermap.org/data/2.5/onecall?lat="+str(lat)+"&lon="+str(lon)+"&exclude=hourly,daily,minutely,alerts+&appid="+OPEN_WEATHER_MAP_API_KEY+"&units=metric"
 
 app = Flask(__name__)
 @app.route("/")
@@ -29,16 +31,13 @@ def set_db_data():
   print(response)
   currentWeather = response['current']
   weatherReport = currentWeather['weather'][0]
-  conn = pymysql.connect(database="WeatherDB",user="admin",password="admin",host="localhost")
+  conn = pymysql.connect(database="weatherdata",user="susan",password="hello1234",host="localhost")
   cur = conn.cursor()
-  sql_query = "INSERT INTO currentWeatherTable (clouds, dt, feels_like, humidity, temp ) VALUES (%(clouds)s,  %(dt)s, %(feels_like)s, %(humidity)s, %(temp)s )"
-  cur.execute(sql_query, currentWeather)
-  sql_query = "INSERT INTO weatherSummaryTable (id, description, icon, main) VALUES (%(id)s, %(description)s, %(icon)s, %(main)s)"
-  cur.execute(sql_query, weatherReport)
-  
+  print(currentWeather)
+  cur.execute("INSERT INTO currentWeatherTable (clouds, dew_point, dt, feels_like, humidity, temp ) VALUES (%(clouds)s,  (%dew_point)s, %(dt)s, %(feels_like)s, %(humidity)s, %(temp)s )", currentWeather)
+  cur.execute("INSERT INTO weatherSummaryTable (id, description, icon, main) VALUES (%(id)s, %(description)s, %(icon)s, %(main)s)", weatherReport)
   return currentWeather
-  return response
-
+ 
 if __name__ == "__main__":
   #Application runs on port 3000
   app.run(host="0.0.0.0", port='3000', debug=1)
